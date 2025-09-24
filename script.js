@@ -3,7 +3,8 @@ const liffId = '2008162847-jMMzgOn1';
 let myUserId = '';
 
 // URL ของ Backend API ของคุณ
-const apiBaseUrl = 'http://localhost:5000'; 
+const apiBaseUrl = 'https://website-degree-bn.onrender.com';
+//const apiBaseUrl = 'http://localhost:5000'; 
 
 // ฟังก์ชันเริ่มต้น LIFF
 async function initializeLiff() {
