@@ -9,42 +9,42 @@ const apiBaseUrl = 'https://website-degree-bn.onrender.com';
 // ฟังก์ชันเริ่มต้น LIFF
 async function initializeLiff() {
     try {
-        // ตรวจสอบว่า LIFF SDK โหลดแล้วหรือยัง
-        if (typeof liff === 'undefined') {
-            console.log('LIFF SDK not available - running in test mode');
-            // แสดงข้อความแจ้งโหมดทดสอบ
-            document.getElementById('testModeNotice').style.display = 'block';
-            // สำหรับการทดสอบใน browser ปกติ
-            myUserId = 'test-user-' + Date.now();
-            console.log(`Test mode - userId: ${myUserId}`);
-            fetchMyGuests(); // ดึงรายชื่อแขกที่เคยลงทะเบียน
-            return;
-        }
-
+        console.log('Initializing LIFF with ID:', liffId);
         await liff.init({ liffId: liffId });
+        console.log('LIFF initialized successfully');
+        
+        // ตรวจสอบสถานะการล็อกอิน
+        console.log('Checking login status...');
         if (!liff.isLoggedIn()) {
+            console.log('User not logged in, redirecting to login...');
             liff.login();
         } else {
+            console.log('User is logged in, getting profile...');
             const profile = await liff.getProfile();
             myUserId = profile.userId;
             console.log(`Logged in with userId: ${myUserId}`);
+            
+            // แสดงรูปโปรไฟล์และชื่อผู้ใช้
+            document.getElementById('profile-container').style.display = 'block';
+            document.getElementById('profile-picture').src = profile.pictureUrl;
+            document.getElementById('display-name').textContent = profile.displayName;
+
             fetchMyGuests(); // ดึงรายชื่อแขกที่เคยลงทะเบียน
         }
     } catch (err) {
         console.error('LIFF initialization failed', err);
-        // ถ้า LIFF ไม่ทำงาน ให้ใช้ fallback mode สำหรับการทดสอบ
-        console.log('Running in test mode - LIFF features disabled');
-        // แสดงข้อความแจ้งโหมดทดสอบ
-        document.getElementById('testModeNotice').style.display = 'block';
-        myUserId = 'test-user-' + Date.now();
-        console.log(`Test mode - userId: ${myUserId}`);
-        fetchMyGuests();
+        alert('เกิดข้อผิดพลาดในการเริ่มต้น LIFF โปรดลองเปิดเว็บไซต์นี้จากแอปพลิเคชัน LINE');
     }
 }
 
 // ฟังก์ชันสำหรับส่งข้อมูลการลงทะเบียน
 document.getElementById('registrationForm').addEventListener('submit', async (e) => {
     e.preventDefault();
+    // ตรวจสอบว่าได้ userId จาก LIFF แล้ว
+    if (!myUserId) {
+        alert('ไม่สามารถลงทะเบียนได้ โปรดล็อกอินผ่าน LINE App ก่อน');
+        return;
+    }
     const formData = new FormData(e.target);
     const guestData = {
         line_user_id: myUserId,
@@ -69,7 +69,8 @@ document.getElementById('registrationForm').addEventListener('submit', async (e)
             document.getElementById('registrationForm').reset();
             fetchMyGuests(); // อัปเดตรายชื่อ
         } else {
-            alert('เกิดข้อผิดพลาดในการลงทะเบียน');
+            const errorData = await response.json();
+            alert(`เกิดข้อผิดพลาดในการลงทะเบียน: ${errorData.error}`);
         }
     } catch (error) {
         console.error('Error submitting data:', error);
@@ -79,6 +80,11 @@ document.getElementById('registrationForm').addEventListener('submit', async (e)
 
 // ฟังก์ชันสำหรับดึงรายชื่อแขกที่ลงทะเบียนโดยผู้ใช้ปัจจุบัน
 async function fetchMyGuests() {
+    // ตรวจสอบว่าได้ userId จาก LIFF แล้ว
+    if (!myUserId || myUserId === 'test-user') {
+        return;
+    }
+
     try {
         const response = await fetch(`${apiBaseUrl}/guests?userId=${myUserId}`);
         const guests = await response.json();
@@ -110,7 +116,8 @@ async function deleteGuest(guestId) {
                 alert('ลบรายชื่อสำเร็จ!');
                 fetchMyGuests(); // อัปเดตรายชื่อ
             } else {
-                alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+                const errorData = await response.json();
+                alert(`เกิดข้อผิดพลาดในการลบ: ${errorData.error}`);
             }
         } catch (error) {
             console.error('Error deleting guest:', error);
@@ -144,18 +151,6 @@ async function viewAllGuests(date) {
 
 // เริ่มต้น LIFF เมื่อหน้าเว็บโหลดเสร็จ
 window.addEventListener('load', () => {
-    // รอให้ LIFF SDK โหลดเสร็จ
-    if (typeof liff !== 'undefined') {
-        initializeLiff();
-    } else {
-        // ถ้า LIFF ยังไม่โหลด รอสักครู่แล้วลองใหม่
-        setTimeout(() => {
-            if (typeof liff !== 'undefined') {
-                initializeLiff();
-            } else {
-                console.log('LIFF SDK not available - starting test mode');
-                initializeLiff(); // เริ่มต้นในโหมดทดสอบ
-            }
-        }, 1000);
-    }
+    console.log('Page loaded, initializing LIFF...');
+    initializeLiff();
 });

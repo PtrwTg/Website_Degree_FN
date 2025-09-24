@@ -1,73 +1,74 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ลงทะเบียนเข้าร่วมงานรับปริญญา</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://static.line-scdn.net/liff/2.21.4/sdk.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียนเข้าร่วมงานรับปริญญา</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://static.line-scdn.net/liff/sdk/v2/liff.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1 class="title">ลงทะเบียนแขกคนสำคัญ</h1>
-        <p class="subtitle">เพื่อความสะดวกในการจัดการงาน กรุณากรอกข้อมูลผู้เข้าร่วมงาน</p>
-        <div id="testModeNotice" class="test-notice" style="display: none;">
-            <p>🔧 <strong>โหมดทดสอบ:</strong> กำลังใช้งานเว็บไซต์ในโหมดทดสอบ (ไม่ใช่ LINE app)</p>
-        </div>
+    <div class="container">
+        <div id="profile-container" style="text-align: center; margin-bottom: 20px; display: none;">
+            <img id="profile-picture" src="" alt="Profile Picture" style="width: 80px; height: 80px; border-radius: 50%; margin-bottom: 10px;">
+            <p>ล็อกอินด้วย: <span id="display-name"></span></p>
+        </div>
+        <h1 class="title">ลงทะเบียนแขกคนสำคัญ</h1>
+        <p class="subtitle">เพื่อความสะดวกในการจัดการงาน กรุณากรอกข้อมูลผู้เข้าร่วมงาน</p>
 
-        <form id="registrationForm" class="form">
-            <div class="form-group">
-                <label for="visitDate">วันที่จะมาเข้าร่วม:</label>
-                <select id="visitDate" name="visitDate" required>
-                    <option value="">-- กรุณาเลือกวัน --</option>
-                    <option value="3-oct">วันซ้อม: วันศุกร์ที่ 3 ตุลาคม</option>
-                    <option value="7-oct">วันจริง: วันอังคารที่ 7 ตุลาคม</option>
-                </select>
-            </div>
+        <form id="registrationForm" class="form">
+            <div class="form-group">
+                <label for="visitDate">วันที่จะมาเข้าร่วม:</label>
+                <select id="visitDate" name="visitDate" required>
+                    <option value="">-- กรุณาเลือกวัน --</option>
+                    <option value="3-oct">วันซ้อม: วันศุกร์ที่ 3 ตุลาคม</option>
+                    <option value="7-oct">วันจริง: วันอังคารที่ 7 ตุลาคม</option>
+                </select>
+            </div>
 
-            <div class="form-group">
-                <label for="firstName">ชื่อ:</label>
-                <input type="text" id="firstName" name="firstName" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="lastName">นามสกุล:</label>
-                <input type="text" id="lastName" name="lastName" required>
-            </div>
+            <div class="form-group">
+                <label for="firstName">ชื่อ:</label>
+                <input type="text" id="firstName" name="firstName" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="lastName">นามสกุล:</label>
+                <input type="text" id="lastName" name="lastName" required>
+            </div>
 
-            <div class="form-group">
-                <label for="gender">เพศ:</label>
-                <select id="gender" name="gender" required>
-                    <option value="ชาย">ชาย</option>
-                    <option value="หญิง">หญิง</option>
-                    <option value="อื่นๆ">อื่นๆ</option>
-                </select>
-            </div>
+            <div class="form-group">
+                <label for="gender">เพศ:</label>
+                <select id="gender" name="gender" required>
+                    <option value="ชาย">ชาย</option>
+                    <option value="หญิง">หญิง</option>
+                    <option value="อื่นๆ">อื่นๆ</option>
+                </select>
+            </div>
 
-            <div class="form-group">
-                <label for="dob">วันเดือนปีเกิด:</label>
-                <input type="date" id="dob" name="dob" required>
-            </div>
-            
-            <button type="submit" class="submit-btn">ลงทะเบียน</button>
-        </form>
+            <div class="form-group">
+                <label for="dob">วันเดือนปีเกิด:</label>
+                <input type="date" id="dob" name="dob" required>
+            </div>
+            
+            <button type="submit" class="submit-btn">ลงทะเบียน</button>
+        </form>
 
-        <hr>
+        <hr>
 
-        <h2 class="section-title">รายชื่อผู้ที่ลงทะเบียนแล้ว (โดยคุณ)</h2>
-        <ul id="guestList" class="guest-list">
-            </ul>
-        
-        <h2 class="section-title">ดูรายชื่อแขกทั้งหมด (ในวันเดียวกัน)</h2>
-        <div class="view-all-container">
-            <button onclick="viewAllGuests('3-oct')" class="view-btn">วันซ้อม (3 ต.ค.)</button>
-            <button onclick="viewAllGuests('7-oct')" class="view-btn">วันจริง (7 ต.ค.)</button>
-        </div>
-        <ul id="allGuestsList" class="guest-list">
-             </ul>
+        <h2 class="section-title">รายชื่อผู้ที่ลงทะเบียนแล้ว (โดยคุณ)</h2>
+        <ul id="guestList" class="guest-list">
+            </ul>
+        
+        <h2 class="section-title">ดูรายชื่อแขกทั้งหมด (ในวันเดียวกัน)</h2>
+        <div class="view-all-container">
+            <button onclick="viewAllGuests('3-oct')" class="view-btn">วันซ้อม (3 ต.ค.)</button>
+            <button onclick="viewAllGuests('7-oct')" class="view-btn">วันจริง (7 ต.ค.)</button>
+        </div>
+        <ul id="allGuestsList" class="guest-list">
+             </ul>
 
-    </div>
+    </div>
 
-    <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
