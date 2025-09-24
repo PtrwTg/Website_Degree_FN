@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ลงทะเบียนเข้าร่วมงานรับปริญญา</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://static.line-scdn.net/liff/sdk/v2/liff.js"></script>
+    <script src="https://static.line-scdn.net/liff/2.21.4/sdk.js"></script>
 </head>
 <body>
     <div class="container">
         <h1 class="title">ลงทะเบียนแขกคนสำคัญ</h1>
         <p class="subtitle">เพื่อความสะดวกในการจัดการงาน กรุณากรอกข้อมูลผู้เข้าร่วมงาน</p>
+        <div id="testModeNotice" class="test-notice" style="display: none;">
+            <p>🔧 <strong>โหมดทดสอบ:</strong> กำลังใช้งานเว็บไซต์ในโหมดทดสอบ (ไม่ใช่ LINE app)</p>
+        </div>
 
         <form id="registrationForm" class="form">
             <div class="form-group">

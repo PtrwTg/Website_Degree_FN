@@ -9,6 +9,18 @@ const apiBaseUrl = 'https://website-degree-bn.onrender.com';
 // ฟังก์ชันเริ่มต้น LIFF
 async function initializeLiff() {
     try {
+        // ตรวจสอบว่า LIFF SDK โหลดแล้วหรือยัง
+        if (typeof liff === 'undefined') {
+            console.log('LIFF SDK not available - running in test mode');
+            // แสดงข้อความแจ้งโหมดทดสอบ
+            document.getElementById('testModeNotice').style.display = 'block';
+            // สำหรับการทดสอบใน browser ปกติ
+            myUserId = 'test-user-' + Date.now();
+            console.log(`Test mode - userId: ${myUserId}`);
+            fetchMyGuests(); // ดึงรายชื่อแขกที่เคยลงทะเบียน
+            return;
+        }
+
         await liff.init({ liffId: liffId });
         if (!liff.isLoggedIn()) {
             liff.login();
@@ -20,6 +32,13 @@ async function initializeLiff() {
         }
     } catch (err) {
         console.error('LIFF initialization failed', err);
+        // ถ้า LIFF ไม่ทำงาน ให้ใช้ fallback mode สำหรับการทดสอบ
+        console.log('Running in test mode - LIFF features disabled');
+        // แสดงข้อความแจ้งโหมดทดสอบ
+        document.getElementById('testModeNotice').style.display = 'block';
+        myUserId = 'test-user-' + Date.now();
+        console.log(`Test mode - userId: ${myUserId}`);
+        fetchMyGuests();
     }
 }
 
@@ -123,7 +142,20 @@ async function viewAllGuests(date) {
     }
 }
 
-// เริ่มต้น LIFF เมื่อหน้าเว็บโหลด
-window.onload = () => {
-    initializeLiff();
-};
+// เริ่มต้น LIFF เมื่อหน้าเว็บโหลดเสร็จ
+window.addEventListener('load', () => {
+    // รอให้ LIFF SDK โหลดเสร็จ
+    if (typeof liff !== 'undefined') {
+        initializeLiff();
+    } else {
+        // ถ้า LIFF ยังไม่โหลด รอสักครู่แล้วลองใหม่
+        setTimeout(() => {
+            if (typeof liff !== 'undefined') {
+                initializeLiff();
+            } else {
+                console.log('LIFF SDK not available - starting test mode');
+                initializeLiff(); // เริ่มต้นในโหมดทดสอบ
+            }
+        }, 1000);
+    }
+});
