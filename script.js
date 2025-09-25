@@ -17,21 +17,32 @@ async function initializeLiff() {
     try {
         updateStatus('liff-status', 'กำลังเริ่มต้น...', 'blue');
         
+        // ตรวจสอบว่าอยู่ใน LINE app หรือไม่
+        const isInLineApp = liff.isInClient();
+        console.log('Running in LINE app:', isInLineApp);
+        
         // 1. เริ่มต้น LIFF
+        console.log('Initializing LIFF with ID:', liffId);
         await liff.init({ liffId: liffId });
         updateStatus('liff-status', '✅ โหลดและเริ่มต้นสำเร็จ', 'green');
+        console.log('LIFF initialized successfully');
 
         // 2. ตรวจสอบสถานะการล็อกอิน
         updateStatus('login-status', 'กำลังตรวจสอบ...', 'blue');
+        console.log('Checking login status...');
+        
         if (!liff.isLoggedIn()) {
             updateStatus('login-status', 'ไม่พบการล็อกอิน, กำลัง Redirect...', 'orange');
+            console.log('User not logged in, redirecting to login...');
             // สั่งล็อกอิน: LIFF จะ Redirect ไปหน้า LINE Login
             liff.login();
         } else {
             updateStatus('login-status', '✅ ล็อกอินแล้ว', 'green');
+            console.log('User is logged in, getting profile...');
             
             // 3. ดึง Profile
             const profile = await liff.getProfile();
+            console.log('Profile retrieved:', profile);
             
             // 4. แสดงข้อมูล Profile
             document.getElementById('profile-container').style.display = 'block';
@@ -53,6 +64,7 @@ async function initializeLiff() {
         }
         updateStatus('error-message', errMsg, 'red');
         console.error('🔴 LIFF initialization failed', err);
+        console.error('Error details:', err);
     }
 }
 
@@ -62,11 +74,29 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // ตรวจสอบว่า liff ถูกกำหนดค่าแล้ว
     if (typeof liff !== 'undefined') {
+        console.log('LIFF SDK found, initializing...');
         initializeLiff();
     } else {
-        // หากยังไม่ได้ แสดงว่ามีปัญหา Network Blocking
-        updateStatus('liff-status', '🔴 SDK โหลดไม่สำเร็จ', 'red');
-        updateStatus('error-message', 'LIFF SDK ถูกบล็อก: ตรวจสอบ Ad Blocker/Network และ Callback URL ใน Console', 'red');
-        console.error('LIFF SDK failed to load or is blocked. Check network connection.');
+        console.log('LIFF SDK not found, waiting for it to load...');
+        // รอสักครู่แล้วลองใหม่
+        setTimeout(() => {
+            if (typeof liff !== 'undefined') {
+                console.log('LIFF SDK loaded after delay, initializing...');
+                initializeLiff();
+            } else {
+                // หากยังไม่ได้ แสดงว่ามีปัญหา Network Blocking หรือไม่ได้เปิดใน LINE app
+                updateStatus('liff-status', '🔴 SDK โหลดไม่สำเร็จ', 'red');
+                
+                // ตรวจสอบว่าอยู่ใน LINE app หรือไม่
+                const isInLineApp = navigator.userAgent.toLowerCase().includes('line');
+                if (!isInLineApp) {
+                    updateStatus('error-message', '⚠️ กรุณาเปิดใน LINE app เท่านั้น! LIFF ทำงานได้เฉพาะใน LINE app', 'orange');
+                    updateStatus('login-status', '❌ ไม่สามารถทดสอบได้', 'red');
+                } else {
+                    updateStatus('error-message', 'LIFF SDK ถูกบล็อก: ตรวจสอบ Ad Blocker/Network และ Callback URL ใน Console', 'red');
+                }
+                console.error('LIFF SDK failed to load or is blocked. Check network connection.');
+            }
+        }, 3000);
     }
 });
