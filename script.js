@@ -10,14 +10,17 @@ const apiBaseUrl = 'https://website-degree-bn.onrender.com';
 async function initializeLiff() {
     try {
         console.log('Initializing LIFF with ID:', liffId);
+        
         // 1. เริ่มต้น LIFF
+        // บรรทัดนี้จะถูกรันเฉพาะเมื่อ LIFF SDK ถูกโหลดเสร็จแล้ว
         await liff.init({ liffId: liffId });
         console.log('LIFF initialized successfully');
         
         // 2. ตรวจสอบสถานะการล็อกอิน
+        console.log('Checking login status...');
         if (!liff.isLoggedIn()) {
             console.log('User not logged in, redirecting to login...');
-            // สั่งล็อกอิน: LIFF จะ Redirect ไปหน้า LINE Login แล้วกลับมาที่ Callback URL
+            // สั่งล็อกอิน: LIFF จะ Redirect ไปหน้า LINE Login
             liff.login();
         } else {
             console.log('User is logged in, getting profile...');
@@ -46,7 +49,7 @@ async function initializeLiff() {
     }
 }
 
-// ฟังก์ชันสำหรับส่งข้อมูลการลงทะเบียน
+// ฟังก์ชันสำหรับส่งข้อมูลการลงทะเบียน (โค้ดเดิม)
 document.getElementById('registrationForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     // ตรวจสอบว่าได้ userId จาก LIFF แล้ว
@@ -87,7 +90,7 @@ document.getElementById('registrationForm').addEventListener('submit', async (e)
     }
 });
 
-// ฟังก์ชันสำหรับดึงรายชื่อแขกที่ลงทะเบียนโดยผู้ใช้ปัจจุบัน
+// ฟังก์ชันสำหรับดึงรายชื่อแขกที่ลงทะเบียนโดยผู้ใช้ปัจจุบัน (โค้ดเดิม)
 async function fetchMyGuests() {
     // ตรวจสอบว่าได้ userId จาก LIFF แล้ว
     if (!myUserId) {
@@ -113,7 +116,7 @@ async function fetchMyGuests() {
     }
 }
 
-// ฟังก์ชันสำหรับลบข้อมูล
+// ฟังก์ชันสำหรับลบข้อมูล (โค้ดเดิม)
 async function deleteGuest(guestId) {
     if (confirm('คุณต้องการลบรายชื่อนี้ใช่ไหม?')) {
         try {
@@ -134,7 +137,7 @@ async function deleteGuest(guestId) {
     }
 }
 
-// ฟังก์ชันสำหรับดูรายชื่อแขกทั้งหมดในแต่ละวัน
+// ฟังก์ชันสำหรับดูรายชื่อแขกทั้งหมดในแต่ละวัน (โค้ดเดิม)
 async function viewAllGuests(date) {
     try {
         const response = await fetch(`${apiBaseUrl}/guests/day/${date}`);
@@ -158,7 +161,22 @@ async function viewAllGuests(date) {
     }
 }
 
-// ✅ เรียก initializeLiff() โดยตรงหลังจากที่มั่นใจว่า LIFF SDK ถูกโหลดแล้ว
-// เนื่องจาก LIFF SDK ถูกโหลดใน index.html ก่อน script.js ดังนั้น liff จะพร้อมใช้งานแล้ว
-console.log('Page loaded, initializing LIFF...');
-initializeLiff();
+// ************************************************************
+// ** การเริ่มต้น LIFF ที่รับประกันว่า liff ถูกกำหนดค่าแล้ว **
+// ************************************************************
+
+// เราจะรอให้โครงสร้างเว็บ (DOM) โหลดเสร็จก่อน
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Page DOM content loaded, attempting to initialize LIFF...');
+    
+    // ตรวจสอบว่า liff ถูกกำหนดค่าแล้วจริง ๆ ก่อนเรียก initializeLiff()
+    // ถ้าไฟล์ liff.js โหลดสำเร็จแล้ว liff จะมีค่า
+    if (typeof liff !== 'undefined') {
+        initializeLiff();
+    } else {
+        // หากยังไม่ได้ ให้รออีกหน่อย (ควรจะแก้ปัญหา ReferenceError ได้แล้ว)
+        // ถ้ามาถึงตรงนี้ แสดงว่าอาจมีปัญหา Network หรือ CDN บล็อก
+        console.error('LIFF SDK failed to load or is blocked. Check network connection.');
+        alert('ไม่สามารถโหลด LINE LIFF SDK ได้ โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต.');
+    }
+});
