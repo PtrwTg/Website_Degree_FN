@@ -5,23 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ลงทะเบียนเข้าร่วมงานรับปริญญา</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1 class="title">ลงทะเบียนแขกคนสำคัญ</h1>
+        <h1 class="title"><i class="fas fa-graduation-cap"></i> ลงทะเบียนแขกคนสำคัญ</h1>
         <p class="subtitle">เพื่อความสะดวกในการจัดการงาน กรุณากรอกข้อมูลผู้เข้าร่วมงาน</p>
         
-        <!-- แสดงข้อมูลผู้ใช้ที่ล็อกอินแล้ว -->
-        <div id="user-info" style="display: none; background-color: #f0f8ff; padding: 15px; margin: 20px 0; border-radius: 10px;">
-            <p>👤 <strong id="user-name">-</strong></p>
-            <p>🆔 User ID: <code id="user-id-display">-</code></p>
+        <div id="user-info" style="display: none; background-color: #f3e5f5; padding: 15px; margin: 20px 0; border-radius: 10px; border: 1px solid #d1c4e9;">
+            <p>👋 ยินดีต้อนรับ: <strong id="user-name">-</strong></p>
+            <p style="font-size:0.85em; color:#757575;">รหัสผู้ใช้: <code id="user-id-display">-</code></p>
         </div>
 
-        <!-- ฟอร์มลงทะเบียน -->
-        <form id="registrationForm" class="form" style="display: none;">
+        <form id="registrationForm" class="form slide-up" style="display: none;">
             <div class="form-group">
-                <label for="visitDate">วันที่จะมาเข้าร่วม:</label>
+                <label for="visitDate"><i class="fas fa-calendar-alt"></i> วันที่จะมาเข้าร่วม:</label>
                 <select id="visitDate" name="visitDate" required>
                     <option value="">-- กรุณาเลือกวัน --</option>
                     <option value="3-oct">วันซ้อม: วันศุกร์ที่ 3 ตุลาคม</option>
@@ -30,47 +30,44 @@
             </div>
 
             <div class="form-group">
-                <label for="firstName">ชื่อ:</label>
+                <label for="firstName"><i class="fas fa-user"></i> ชื่อ:</label>
                 <input type="text" id="firstName" name="firstName" required>
             </div>
             
             <div class="form-group">
-                <label for="lastName">นามสกุล:</label>
+                <label for="lastName"><i class="fas fa-user-tag"></i> นามสกุล:</label>
                 <input type="text" id="lastName" name="lastName" required>
             </div>
 
-
             <div class="form-group">
-                <label for="dob">วันเดือนปีเกิด:</label>
+                <label for="dob"><i class="fas fa-birthday-cake"></i> วันเดือนปีเกิด:</label>
                 <input type="date" id="dob" name="dob" required>
             </div>
 
             <div class="form-group">
-                <label for="phone">เบอร์โทรศัพท์:</label>
+                <label for="phone"><i class="fas fa-phone"></i> เบอร์โทรศัพท์:</label>
                 <input type="tel" id="phone" name="phone" placeholder="เช่น 081-234-5678" required>
             </div>
             
-            <button type="submit" class="submit-btn">ลงทะเบียน</button>
+            <button type="submit" class="submit-btn btn-primary"><i class="fas fa-check-circle"></i> ลงทะเบียน</button>
         </form>
 
-        <!-- ข้อความรอการล็อกอิน -->
-        <div id="login-message" style="text-align: center; padding: 20px;">
-            <p>⏳ กำลังรอการล็อกอิน...</p>
+        <div id="login-message" class="status-box fade-in">
+            <p>⏳ กำลังรอการเชื่อมต่อ LIFF และล็อกอิน...</p>
         </div>
 
         <hr>
 
-        <!-- รายชื่อผู้ลงทะเบียน -->
-        <h2 class="section-title">รายชื่อผู้ที่ลงทะเบียนแล้ว (โดยคุณ)</h2>
-        <ul id="guestList" class="guest-list">
+        <h2 class="section-title"><i class="fas fa-list-alt"></i> รายชื่อผู้ที่ลงทะเบียนแล้ว (โดยคุณ)</h2>
+        <ul id="guestList" class="guest-list fade-in">
         </ul>
         
-        <h2 class="section-title">ดูรายชื่อแขกทั้งหมด (ในวันเดียวกัน)</h2>
+        <h2 class="section-title"><i class="fas fa-users"></i> ดูรายชื่อแขกทั้งหมด (ในวันเดียวกัน)</h2>
         <div class="view-all-container">
-            <button onclick="viewAllGuests('3-oct')" class="view-btn">วันซ้อม (3 ต.ค.)</button>
-            <button onclick="viewAllGuests('7-oct')" class="view-btn">วันจริง (7 ต.ค.)</button>
+            <button onclick="viewAllGuests('3-oct')" class="view-btn btn-secondary">วันซ้อม (3 ต.ค.)</button>
+            <button onclick="viewAllGuests('7-oct')" class="view-btn btn-secondary">วันจริง (7 ต.ค.)</button>
         </div>
-        <ul id="allGuestsList" class="guest-list">
+        <ul id="allGuestsList" class="guest-list fade-in">
         </ul>
     </div>
 
