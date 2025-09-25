@@ -1,5 +1,10 @@
 // LIFF ID ของคุณ (2008162847-jMMzgOn1)
 const liffId = '2008162847-jMMzgOn1';
+let myUserId = '';
+
+// URL ของ Backend API ของคุณ
+const apiBaseUrl = 'https://website-degree-bn.onrender.com';
+//const apiBaseUrl = 'http://localhost:5000';
 
 // อัปเดตสถานะในหน้าเว็บ
 function updateStatus(elementId, message, color = 'black') {
@@ -10,93 +15,168 @@ function updateStatus(elementId, message, color = 'black') {
     }
 }
 
-// ฟังก์ชันหลัก: เริ่มต้น LIFF และทดสอบ Login
+// ฟังก์ชันหลัก: เริ่มต้น LIFF และล็อกอิน
 async function initializeLiff() {
-    updateStatus('liff-id-display', liffId);
-    
     try {
-        updateStatus('liff-status', 'กำลังเริ่มต้น...', 'blue');
-        
-        // ตรวจสอบว่าอยู่ใน LINE app หรือไม่
-        const isInLineApp = liff.isInClient();
-        console.log('Running in LINE app:', isInLineApp);
+        console.log('Initializing LIFF with ID:', liffId);
         
         // 1. เริ่มต้น LIFF
-        console.log('Initializing LIFF with ID:', liffId);
         await liff.init({ liffId: liffId });
-        updateStatus('liff-status', '✅ โหลดและเริ่มต้นสำเร็จ', 'green');
         console.log('LIFF initialized successfully');
 
         // 2. ตรวจสอบสถานะการล็อกอิน
-        updateStatus('login-status', 'กำลังตรวจสอบ...', 'blue');
-        console.log('Checking login status...');
-        
         if (!liff.isLoggedIn()) {
-            updateStatus('login-status', 'ไม่พบการล็อกอิน, กำลัง Redirect...', 'orange');
             console.log('User not logged in, redirecting to login...');
-            // สั่งล็อกอิน: LIFF จะ Redirect ไปหน้า LINE Login
             liff.login();
         } else {
-            updateStatus('login-status', '✅ ล็อกอินแล้ว', 'green');
             console.log('User is logged in, getting profile...');
             
             // 3. ดึง Profile
             const profile = await liff.getProfile();
-            console.log('Profile retrieved:', profile);
+            myUserId = profile.userId;
+            console.log(`Logged in with userId: ${myUserId}`);
             
-            // 4. แสดงข้อมูล Profile
-            document.getElementById('profile-container').style.display = 'block';
-            document.getElementById('profile-picture').src = profile.pictureUrl;
-            document.getElementById('display-name').textContent = profile.displayName;
-            document.getElementById('user-id').textContent = profile.userId;
-
-            // ซ่อนส่วนสถานะเมื่อล็อกอินสำเร็จ
-            document.getElementById('status-box').style.display = 'none';
+            // 4. แสดงข้อมูลผู้ใช้
+            document.getElementById('user-info').style.display = 'block';
+            document.getElementById('user-name').textContent = profile.displayName;
+            document.getElementById('user-id-display').textContent = myUserId;
+            
+            // 5. แสดงฟอร์มลงทะเบียน
+            document.getElementById('registrationForm').style.display = 'block';
+            document.getElementById('login-message').style.display = 'none';
+            
+            // 6. ดึงรายชื่อแขกที่เคยลงทะเบียน
+            fetchMyGuests();
         }
     } catch (err) {
-        // จัดการ Error ที่เกิดขึ้น
-        updateStatus('liff-status', '🔴 ล้มเหลว', 'red');
-        let errMsg = 'LIFF init ล้มเหลว';
-        if (err && err.message) {
-            errMsg += `: ${err.message}`;
+        console.error('LIFF initialization failed', err);
+        document.getElementById('login-message').innerHTML = '<p>❌ เกิดข้อผิดพลาดในการล็อกอิน กรุณาลองใหม่</p>';
+    }
+}
+
+// ฟังก์ชันสำหรับส่งข้อมูลการลงทะเบียน
+document.getElementById('registrationForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const guestData = {
+        line_user_id: myUserId,
+        firstName: formData.get('firstName'),
+        lastName: formData.get('lastName'),
+        date_of_birth: formData.get('dob'),
+        phone: formData.get('phone'),
+        visit_date: formData.get('visitDate'),
+    };
+
+    try {
+        const response = await fetch(`${apiBaseUrl}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(guestData)
+        });
+
+        if (response.ok) {
+            alert('ลงทะเบียนสำเร็จ!');
+            document.getElementById('registrationForm').reset();
+            fetchMyGuests(); // อัปเดตรายชื่อ
         } else {
-            errMsg += '. ตรวจสอบ Console และการตั้งค่า Domain';
+            alert('เกิดข้อผิดพลาดในการลงทะเบียน');
         }
-        updateStatus('error-message', errMsg, 'red');
-        console.error('🔴 LIFF initialization failed', err);
-        console.error('Error details:', err);
+    } catch (error) {
+        console.error('Error submitting data:', error);
+        alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้');
+    }
+});
+
+// ฟังก์ชันสำหรับดึงรายชื่อแขกที่ลงทะเบียนโดยผู้ใช้ปัจจุบัน
+async function fetchMyGuests() {
+    try {
+        const response = await fetch(`${apiBaseUrl}/guests?userId=${myUserId}`);
+        const guests = await response.json();
+        const guestListElement = document.getElementById('guestList');
+        guestListElement.innerHTML = '';
+        guests.forEach(guest => {
+            const listItem = document.createElement('li');
+            listItem.className = 'guest-item';
+            listItem.innerHTML = `
+                <span>${guest.first_name} ${guest.last_name} (${guest.visit_date})</span>
+                ${guest.phone ? `<small style="display: block; color: #666;">📞 ${guest.phone}</small>` : ''}
+                <button class="delete-btn" onclick="deleteGuest('${guest.id}')">ลบ</button>
+            `;
+            guestListElement.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error fetching guests:', error);
+    }
+}
+
+// ฟังก์ชันสำหรับลบข้อมูล
+async function deleteGuest(guestId) {
+    if (confirm('คุณต้องการลบรายชื่อนี้ใช่ไหม?')) {
+        try {
+            const response = await fetch(`${apiBaseUrl}/guest/${guestId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                alert('ลบรายชื่อสำเร็จ!');
+                fetchMyGuests(); // อัปเดตรายชื่อ
+            } else {
+                alert('เกิดข้อผิดพลาดในการลบข้อมูล');
+            }
+        } catch (error) {
+            console.error('Error deleting guest:', error);
+        }
+    }
+}
+
+// ฟังก์ชันสำหรับดูรายชื่อแขกทั้งหมดในแต่ละวัน
+async function viewAllGuests(date) {
+    try {
+        const response = await fetch(`${apiBaseUrl}/guests/day/${date}`);
+        const guests = await response.json();
+        const allGuestsListElement = document.getElementById('allGuestsList');
+        allGuestsListElement.innerHTML = '';
+        
+        if (guests.length === 0) {
+            allGuestsListElement.innerHTML = '<li class="guest-item">ยังไม่มีผู้ลงทะเบียนในวันนี้</li>';
+            return;
+        }
+
+        guests.forEach(guest => {
+            const listItem = document.createElement('li');
+            listItem.className = 'guest-item';
+            listItem.innerHTML = `
+                <span>${guest.first_name} ${guest.last_name}</span>
+                ${guest.phone ? `<small style="display: block; color: #666;">📞 ${guest.phone}</small>` : ''}
+            `;
+            allGuestsListElement.appendChild(listItem);
+        });
+    } catch (error) {
+        console.error('Error fetching all guests:', error);
     }
 }
 
 // รอให้ DOM โหลดเสร็จก่อนเรียก initializeLiff()
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('Page DOM content loaded, attempting to initialize LIFF...');
+    console.log('Page loaded, initializing LIFF...');
     
-    // ตรวจสอบว่า liff ถูกกำหนดค่าแล้ว
+    // ตรวจสอบว่า LIFF SDK โหลดแล้วหรือยัง
     if (typeof liff !== 'undefined') {
         console.log('LIFF SDK found, initializing...');
         initializeLiff();
     } else {
-        console.log('LIFF SDK not found, waiting for it to load...');
+        console.log('LIFF SDK not found, waiting...');
         // รอสักครู่แล้วลองใหม่
         setTimeout(() => {
             if (typeof liff !== 'undefined') {
                 console.log('LIFF SDK loaded after delay, initializing...');
                 initializeLiff();
             } else {
-                // หากยังไม่ได้ แสดงว่ามีปัญหา Network Blocking หรือไม่ได้เปิดใน LINE app
-                updateStatus('liff-status', '🔴 SDK โหลดไม่สำเร็จ', 'red');
-                
-                // ตรวจสอบว่าอยู่ใน LINE app หรือไม่
-                const isInLineApp = navigator.userAgent.toLowerCase().includes('line');
-                if (!isInLineApp) {
-                    updateStatus('error-message', '⚠️ กรุณาเปิดใน LINE app เท่านั้น! LIFF ทำงานได้เฉพาะใน LINE app', 'orange');
-                    updateStatus('login-status', '❌ ไม่สามารถทดสอบได้', 'red');
-                } else {
-                    updateStatus('error-message', 'LIFF SDK ถูกบล็อก: ตรวจสอบ Ad Blocker/Network และ Callback URL ใน Console', 'red');
-                }
-                console.error('LIFF SDK failed to load or is blocked. Check network connection.');
+                console.log('LIFF SDK not available');
+                document.getElementById('login-message').innerHTML = '<p>❌ ไม่สามารถโหลด LIFF SDK ได้ กรุณาเปิดใน LINE app</p>';
             }
-        }, 3000);
+        }, 2000);
     }
 });
