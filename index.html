@@ -11,45 +11,47 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="title"><i class="fas fa-graduation-cap"></i> ลงทะเบียนแขกคนสำคัญ</h1>
-        <p class="subtitle">เพื่อความสะดวกในการจัดการงาน กรุณากรอกข้อมูลผู้เข้าร่วมงาน</p>
+        <h1 class="title"><i class="fas fa-handshake-angle"></i> เชิญพี่ๆน้องๆเพื่อนๆญาติๆเข้าร่วมงานค้าบ!</h1>
+        <p class="subtitle">เพื่อความสะดวกในการนัดหมายและการต้อนรับ กรุณาลงทะเบียนผู้เข้าร่วมงานหน่อยน้า 😊</p>
         
         <div id="user-info" style="display: none; background-color: #f3e5f5; padding: 15px; margin: 20px 0; border-radius: 10px; border: 1px solid #d1c4e9;">
             <p>👋 ยินดีต้อนรับ: <strong id="user-name">-</strong></p>
-            <p style="font-size:0.85em; color:#757575;">รหัสผู้ใช้: <code id="user-id-display">-</code></p>
+            <p style="font-size: 0.8rem; color: #777;">*ข้อมูลจะใช้เพื่อระบุตัวตนในการลงทะเบียนเท่านั้น</p>
         </div>
-
-        <form id="registrationForm" class="form slide-up" style="display: none;">
+        
+        <form id="registration-form" class="fade-in">
             <div class="form-group">
-                <label for="visitDate"><i class="fas fa-calendar-alt"></i> วันที่จะมาเข้าร่วม:</label>
-                <select id="visitDate" name="visitDate" required>
-                    <option value="">-- กรุณาเลือกวัน --</option>
-                    <option value="3-oct">วันซ้อม: วันศุกร์ที่ 3 ตุลาคม</option>
-                    <option value="7-oct">วันจริง: วันอังคารที่ 7 ตุลาคม</option>
+                <label for="date"><i class="fas fa-calendar-alt"></i> จะมาวันไหนเอ่ย? (เลือกได้วันเดียว จะมาทั้งสองวันก็ติดต่อหลังไมค์นะจั๊บ)</label>
+                <select id="date" name="date" required>
+                    <option value="">-- เลือกวันที่จะมาเลยจ้า --</option>
+                    <option value="3-oct">วันซ้อม: ศุกร์ที่ 3 ตุลาคม (07:00 - 20:00)</option>
+                    <option value="7-oct">วันจริง: อังคารที่ 7 ตุลาคม (08:00 เป็นต้นไป)</option>
                 </select>
             </div>
 
+            <div id="schedule-display" class="schedule-box" style="display: none;">
+                </div>
+            <div class="form-group" id="arrival-time-group" style="display: none;">
+                <label for="arrival_time"><i class="fas fa-clock"></i> คาดว่าจะมาถึงประมาณกี่โมงดี?</label>
+                <input type="time" id="arrival_time" name="arrival_time" required>
+            </div>
+
             <div class="form-group">
-                <label for="firstName"><i class="fas fa-user"></i> ชื่อ:</label>
-                <input type="text" id="firstName" name="firstName" required>
+                <label for="first_name"><i class="fas fa-user-tag"></i> ชื่อจริง:</label>
+                <input type="text" id="first_name" name="first_name" placeholder="เช่น สุดหล่อ" required>
             </div>
             
             <div class="form-group">
-                <label for="lastName"><i class="fas fa-user-tag"></i> นามสกุล:</label>
-                <input type="text" id="lastName" name="lastName" required>
+                <label for="last_name"><i class="fas fa-user-tag"></i> นามสกุล:</label>
+                <input type="text" id="last_name" name="last_name" placeholder="เช่น ใจดี" required>
             </div>
-
+            
             <div class="form-group">
-                <label for="dob"><i class="fas fa-birthday-cake"></i> วันเดือนปีเกิด:</label>
-                <input type="date" id="dob" name="dob" required>
-            </div>
-
-            <div class="form-group">
-                <label for="phone"><i class="fas fa-phone"></i> เบอร์โทรศัพท์:</label>
+                <label for="phone"><i class="fas fa-phone"></i> เบอร์โทรศัพท์ (เผื่อมีเรื่องด่วน):</label>
                 <input type="tel" id="phone" name="phone" placeholder="เช่น 081-234-5678" required>
             </div>
             
-            <button type="submit" class="submit-btn btn-primary"><i class="fas fa-check-circle"></i> ลงทะเบียน</button>
+            <button type="submit" class="submit-btn btn-primary"><i class="fas fa-check-circle"></i> ลงทะเบียน (มาเจอกันนะ!)</button>
         </form>
 
         <div id="login-message" class="status-box fade-in">
@@ -58,19 +60,20 @@
 
         <hr>
 
-        <h2 class="section-title"><i class="fas fa-list-alt"></i> รายชื่อผู้ที่ลงทะเบียนแล้ว (โดยคุณ)</h2>
+        <h2 class="section-title"><i class="fas fa-heart"></i> รายชื่อผู้ที่ลงทะเบียนมากับคุณแล้ว</h2>
         <ul id="guestList" class="guest-list fade-in">
         </ul>
         
-        <h2 class="section-title"><i class="fas fa-users"></i> ดูรายชื่อแขกทั้งหมด (ในวันเดียวกัน)</h2>
+        <h2 class="section-title"><i class="fas fa-users-viewfinder"></i> ดูรายชื่อแขกทั้งหมดในวันนั้น</h2>
         <div class="view-all-container">
             <button onclick="viewAllGuests('3-oct')" class="view-btn btn-secondary">วันซ้อม (3 ต.ค.)</button>
             <button onclick="viewAllGuests('7-oct')" class="view-btn btn-secondary">วันจริง (7 ต.ค.)</button>
         </div>
         <ul id="allGuestsList" class="guest-list fade-in">
         </ul>
-    </div>
+        <p id="all-guest-status" class="status-box"></p>
 
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

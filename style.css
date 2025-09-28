@@ -31,171 +31,122 @@ body {
     color: #4a148c; /* ม่วงเข้ม */
     font-size: 2.2rem;
     margin-bottom: 0.5rem;
-    font-weight: 700;
-}
-.title i {
-    color: #ffd700; /* ทอง */
-    margin-right: 10px;
-    animation: bounceIn 1s ease-out;
 }
 
+/* Subtitle - ปรับให้ดูเป็นกันเอง */
 .subtitle {
-    color: #757575;
-    margin-bottom: 2rem;
-}
-
-/* Status Box / Messages */
-.status-box {
-    background-color: #f3e5f5; /* Light Lavender */
-    border: 1px solid #ce93d8;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 20px;
-    color: #4a148c;
+    color: #8e24aa; /* ม่วงอ่อนลง */
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
     font-weight: 600;
 }
-#login-message p {
-    margin: 0;
-}
-
 
 /* Form Styling */
-.form {
-    text-align: left;
-    padding: 15px;
-    border: 1px solid #eee;
-    border-radius: 10px;
-    background-color: #fdfdfd;
-}
-
 .form-group {
-    margin-bottom: 1.5rem;
+    text-align: left;
+    margin-bottom: 1.25rem;
 }
 
 label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #6a1b9a; /* ม่วงกลาง */
-    display: flex;
-    align-items: center;
-}
-label i {
-    margin-right: 8px;
-    color: #ffd700; /* ทอง */
+    color: #6a1b9a; /* ม่วงหลัก */
+    font-size: 1rem;
 }
 
 input[type="text"], 
-input[type="date"], 
 input[type="tel"],
+input[type="time"], /* เพิ่มสำหรับ input time */
 select {
     width: 100%;
-    padding: 0.9rem;
-    border: 1px solid #ccc;
+    padding: 0.75rem;
+    border: 1px solid #d1c4e9; /* สีม่วงอ่อน */
     border-radius: 8px;
-    font-size: 1rem;
     box-sizing: border-box;
+    font-size: 1rem;
     font-family: 'Sarabun', sans-serif;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
-input[type="text"]:focus, input[type="date"]:focus, input[type="tel"]:focus, select:focus {
+
+input:focus, select:focus {
     border-color: #9c27b0;
     box-shadow: 0 0 8px rgba(156, 39, 176, 0.2);
     outline: none;
 }
 
-/* Buttons */
 .submit-btn {
     width: 100%;
     padding: 1rem;
-    background-color: #6a1b9a; /* ม่วงหลัก */
+    background-color: #6a1b9a; /* ม่วงเข้ม */
     color: white;
     border: none;
-    border-radius: 50px; /* ทำให้ปุ่มโค้งมน */
-    font-size: 1.1rem;
+    border-radius: 50px;
     cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 600;
-    box-shadow: 0 4px 10px rgba(106, 27, 154, 0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.submit-btn i {
-    margin-right: 8px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-top: 1.5rem;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 4px 10px rgba(106, 27, 154, 0.4);
 }
 
 .submit-btn:hover {
-    background-color: #4a148c; /* ม่วงเข้มขึ้น */
-    transform: translateY(-2px); /* อนิเมชันยกตัวขึ้น */
-    box-shadow: 0 6px 15px rgba(106, 27, 154, 0.4);
-}
-
-.btn-secondary {
-    background-color: #ffd700; /* ทอง */
-    color: #4a148c; /* ม่วงเข้ม */
-    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
-}
-
-.btn-secondary:hover {
-    background-color: #ffc107;
+    background-color: #5e35b1;
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(255, 215, 0, 0.4);
 }
 
-/* Separator */
-hr {
-    border: 0;
-    height: 1px;
-    background: linear-gradient(to right, #ffffff00, #d1c4e9, #ffffff00); /* เส้นแบ่งแบบ Fade */
-    margin: 2rem 0;
+/* Status and Info Boxes */
+.status-box {
+    background-color: #fff3e0;
+    color: #e65100;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-weight: 500;
 }
 
-/* Sections */
+/* List Styling (General) */
 .section-title {
-    color: #4a148c; /* ม่วงเข้ม */
-    font-size: 1.6rem;
+    color: #4a148c;
+    margin-top: 1.5rem;
     margin-bottom: 1rem;
-    border-bottom: 2px dashed #e0e0e0;
-    padding-bottom: 10px;
-    font-weight: 600;
-}
-.section-title i {
-    margin-right: 8px;
-    color: #ffd700;
+    font-size: 1.5rem;
+    border-bottom: 2px solid #e0d0ff;
+    padding-bottom: 5px;
 }
 
-/* Guest List */
 .guest-list {
     list-style: none;
     padding: 0;
-    margin-top: 15px;
+    text-align: left;
 }
 
 .guest-item {
-    background-color: #f3e5f5; /* Light Lavender */
-    padding: 1rem;
-    border-radius: 10px;
-    margin-bottom: 0.75rem;
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 8px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-left: 5px solid #d1c4e9;
-    animation: fadeIn 0.5s ease-out; /* อนิเมชันแสดงรายการ */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-size: 1rem;
+    color: #333;
 }
-.guest-item span {
-    font-weight: 600;
-    color: #6a1b9a;
+
+.guest-item strong {
+    color: #4a148c;
 }
 
 .delete-btn {
     background-color: #f44336;
     color: white;
     border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
+    padding: 5px 10px;
+    border-radius: 5px;
     cursor: pointer;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     transition: background-color 0.3s;
 }
 .delete-btn:hover {
@@ -229,6 +180,43 @@ hr {
 }
 
 
+/* --- NEW: Schedule Box Styling --- */
+
+.schedule-box {
+    text-align: left;
+    padding: 15px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(45deg, #e3f2fd, #bbdefb); /* โทนสีฟ้าอ่อน */
+    border: 1px solid #90caf9;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.schedule-box h3 {
+    color: #1976d2; /* น้ำเงินเข้ม */
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #64b5f6;
+    padding-bottom: 5px;
+}
+
+.schedule-box p {
+    margin: 5px 0;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.schedule-box .time-slot {
+    font-weight: 700;
+    color: #0d47a1; /* น้ำเงินเข้มขึ้น */
+    display: inline-block;
+    width: 120px;
+}
+
 /* --- ANIMATIONS --- */
 @keyframes fadeInContainer {
     from { opacity: 0; transform: scale(0.98); }
@@ -238,33 +226,4 @@ hr {
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideUp {
-    from { opacity: 0; transform: translateY(30px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes bounceIn {
-    0% { transform: scale(0.5); opacity: 0; }
-    70% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); }
-}
-
-/* Responsive */
-@media (max-width: 600px) {
-    .container {
-        padding: 1.5rem;
-        margin: 10px;
-    }
-    .title {
-        font-size: 1.8rem;
-    }
-    .view-all-container {
-        flex-direction: column;
-        gap: 10px;
-    }
-    .view-btn {
-        width: 100%;
-    }
 }
