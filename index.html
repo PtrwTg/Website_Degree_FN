@@ -1,338 +1,79 @@
 <!DOCTYPE html>
-<html lang="th"><head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>ลงทะเบียนเข้าร่วมงานรับปริญญา</title>
-<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-<script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#6d28d9',
-                        'background-light': '#f5f3ff',
-                        'background-dark': '#1e1b4b',
-                        'card-light': '#ffffff',
-                        'card-dark': '#312e81',
-                        'text-light': '#4c1d95',
-                        'text-dark': '#e0e7ff',
-                        'subtext-light': '#5b21b6',
-                        'subtext-dark': '#c7d2fe',
-                    },
-                    fontFamily: {
-                        display: ['Sarabun', 'sans-serif'],
-                    },
-                    borderRadius: {
-                        'DEFAULT': '1rem',
-                        'lg': '1.5rem',
-                        'xl': '2rem',
-                    },
-                },
-            },
-        };
-    </script>
-<style>
-        body {
-            font-family: 'Sarabun', sans-serif;
-        }
-    </style>
-<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ลงทะเบียนเข้าร่วมงานรับปริญญา</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 </head>
-<body class="bg-background-light dark:bg-background-dark min-h-screen flex items-start justify-center p-4 sm:p-6">
-<div class="container bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-2xl max-w-2xl w-full text-center border-t-8 border-primary animate-fadeInContainer">
-<h1 class="text-3xl sm:text-4xl font-bold text-text-light dark:text-text-dark flex items-center justify-center gap-3">
-<i class="material-icons text-primary text-4xl">celebration</i>
-            เชิญร่วมงานรับปริญญาค้าบ!
-        </h1>
-<p class="text-subtext-light dark:text-subtext-dark mt-2 mb-6">
-            เพื่อความสะดวกในการนัดหมายและการต้อนรับ กรุณาลงทะเบียนหน่อยน้า 😊
-        </p>
-<div class="bg-primary/10 dark:bg-primary/20 p-4 mb-6 rounded-lg border border-primary/20" id="user-info" style="display: none;">
-<p class="text-text-light dark:text-text-dark">👋 ยินดีต้อนรับ: <strong class="font-semibold" id="user-name">-</strong></p>
-<p class="text-xs text-subtext-light dark:text-subtext-dark mt-1">*ข้อมูลจะใช้เพื่อระบุตัวตนในการลงทะเบียนเท่านั้น</p>
-</div>
-<form class="space-y-6 text-left" id="registration-form">
-<div>
-<label class="flex items-center gap-2 font-semibold text-text-light dark:text-text-dark mb-2" for="date">
-<i class="material-icons">calendar_month</i>
-                    จะมาวันไหนเอ่ย?
-                </label>
-<select class="w-full rounded-md border-gray-300 dark:border-indigo-900 bg-white dark:bg-indigo-900/50 text-gray-700 dark:text-indigo-200 focus:border-primary focus:ring-primary" id="date" name="date" required="">
-<option value="">-- เลือกวันที่จะมาเลยจ้า --</option>
-<option value="3-oct">วันซ้อม: ศุกร์ที่ 3 ตุลาคม (07:00 - 20:00)</option>
-<option value="7-oct">วันจริง: อังคารที่ 7 ตุลาคม (08:00 เป็นต้นไป)</option>
-</select>
-</div>
-<div class="rounded-lg p-4" id="schedule-display" style="display: none;"></div>
-<div id="arrival-time-group" style="display: none;">
-<label class="flex items-center gap-2 font-semibold text-text-light dark:text-text-dark mb-2" for="arrival_time">
-<i class="material-icons">schedule</i>
-                    คาดว่าจะมาถึงประมาณกี่โมง?
-                </label>
-<input class="w-full rounded-md border-gray-300 dark:border-indigo-900 bg-white dark:bg-indigo-900/50 text-gray-700 dark:text-indigo-200 focus:border-primary focus:ring-primary" id="arrival_time" name="arrival_time" required="" type="time"/>
-</div>
-<div>
-<label class="flex items-center gap-2 font-semibold text-text-light dark:text-text-dark mb-2" for="first_name">
-<i class="material-icons">person</i>
-                    ชื่อจริง:
-                </label>
-<input class="w-full rounded-md border-gray-300 dark:border-indigo-900 bg-white dark:bg-indigo-900/50 text-gray-700 dark:text-indigo-200 focus:border-primary focus:ring-primary" id="first_name" name="first_name" placeholder="เช่น สุดหล่อ" required="" type="text"/>
-</div>
-<div>
-<label class="flex items-center gap-2 font-semibold text-text-light dark:text-text-dark mb-2" for="last_name">
-<i class="material-icons">person</i>
-                    นามสกุล:
-                </label>
-<input class="w-full rounded-md border-gray-300 dark:border-indigo-900 bg-white dark:bg-indigo-900/50 text-gray-700 dark:text-indigo-200 focus:border-primary focus:ring-primary" id="last_name" name="last_name" placeholder="เช่น ใจดี" required="" type="text"/>
-</div>
-<div>
-<label class="flex items-center gap-2 font-semibold text-text-light dark:text-text-dark mb-2" for="phone">
-<i class="material-icons">phone</i>
-                    เบอร์โทรศัพท์ (เผื่อมีเรื่องด่วน):
-                </label>
-<input class="w-full rounded-md border-gray-300 dark:border-indigo-900 bg-white dark:bg-indigo-900/50 text-gray-700 dark:text-indigo-200 focus:border-primary focus:ring-primary" id="phone" name="phone" placeholder="เช่น 081-234-5678" required="" type="tel"/>
-</div>
-<button class="submit-btn w-full bg-primary text-white font-bold py-3 px-4 rounded-full hover:bg-violet-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark transition-all duration-300 ease-in-out transform hover:scale-105 flex items-center justify-center gap-2" type="submit">
-<i class="material-icons">check_circle</i>
-                ลงทะเบียน (มาเจอกันนะ!)
-            </button>
-</form>
-<div class="mt-6 p-4 bg-yellow-100 dark:bg-yellow-900/50 text-yellow-800 dark:text-yellow-300 rounded-lg flex items-center justify-center gap-3" id="login-message">
-<i class="material-icons animate-spin">sync</i>
-<p>กำลังรอการเชื่อมต่อ LIFF และล็อกอิน...</p>
-</div>
-<hr class="my-8 border-gray-300 dark:border-indigo-800"/>
-<div class="space-y-6">
-<div>
-<h2 class="text-2xl font-bold text-text-light dark:text-text-dark flex items-center justify-center gap-2 mb-4">
-<i class="material-icons text-primary">favorite</i>
-                    รายชื่อที่คุณลงทะเบียน
-                </h2>
-<ul class="space-y-3 text-left" id="guestList"></ul>
-</div>
-<div>
-<h2 class="text-2xl font-bold text-text-light dark:text-text-dark flex items-center justify-center gap-2 mb-4">
-<i class="material-icons text-primary">groups</i>
-                    ดูรายชื่อแขกทั้งหมด
-                </h2>
-<div class="flex flex-col sm:flex-row justify-center gap-4 mb-4">
-<button class="bg-primary/10 dark:bg-primary/20 text-primary dark:text-indigo-200 font-semibold py-2 px-6 rounded-full hover:bg-primary/20 dark:hover:bg-primary/30 transition" onclick="viewAllGuests('3-oct')">วันซ้อม (3 ต.ค.)</button>
-<button class="bg-primary/10 dark:bg-primary/20 text-primary dark:text-indigo-200 font-semibold py-2 px-6 rounded-full hover:bg-primary/20 dark:hover:bg-primary/30 transition" onclick="viewAllGuests('7-oct')">วันจริง (7 ต.ค.)</button>
-</div>
-<p class="text-subtext-light dark:text-subtext-dark min-h-[1.5rem]" id="all-guest-status"></p>
-<ul class="space-y-3 text-left mt-4" id="allGuestsList"></ul>
-</div>
-</div>
-</div>
-<script>
-        // LIFF ID ของคุณ (2008162847-jMMzgOn1)
-        const liffId = '2008162847-jMMzgOn1';
-        let myUserId = '';
-        let myName = ''; // เก็บชื่อผู้ใช้ที่ล็อกอิน
-        let myPictureUrl = '';
-        // URL ของ Backend API ของคุณ
-        const apiBaseUrl = 'https://website-degree-bn.onrender.com';
-        //const apiBaseUrl = 'http://localhost:5000';
-        // อัปเดตสถานะในหน้าเว็บ
-        function updateStatus(elementId, message, color = 'black') {
-            const element = document.getElementById(elementId);
-            if (element) {
-                element.innerHTML = `<p>${message}</p>`; // Wrap in p for consistency
-                element.style.color = color;
-            }
-        }
-        // ===================================
-        // ฟังก์ชันแสดงกำหนดการ (Schedule)
-        // ===================================
-        function displaySchedule(dateValue) {
-            const scheduleDisplay = document.getElementById('schedule-display');
-            const arrivalTimeGroup = document.getElementById('arrival-time-group');
-            let title = '';
-            let content = '';
-            if (dateValue === '3-oct') {
-                title = '🗓️ กำหนดการวันซ้อม (3 ตุลาคม)';
-                content = `
-                    <p class="flex items-start gap-2"><span class="font-bold text-indigo-700 dark:text-indigo-300 w-28 shrink-0">07:00 - 10:45 น.</span> <span>ฝึกซ้อมย่อย/ถ่ายรูป</span></p>
-                    <p class="flex items-start gap-2"><span class="font-bold text-indigo-700 dark:text-indigo-300 w-28 shrink-0">11:30 - 13:30 น.</span> <span>ฝึกซ้อมรับปริญญาบัตรบนเวที</span></p>
-                    <p class="flex items-start gap-2"><span class="font-bold text-indigo-700 dark:text-indigo-300 w-28 shrink-0">14:00 - 20:00 น.</span> <span>ฝึกซ้อมใหญ่</span></p>
-                    <p class="mt-3 font-semibold text-red-600 dark:text-red-400">* แนะนำให้มาในช่วงบ่ายเป็นต้นไปครับ</p>
-                `;
-                scheduleDisplay.className = 'rounded-lg p-4 bg-blue-100 dark:bg-blue-900/50 border-l-4 border-blue-500 text-blue-800 dark:text-blue-200 space-y-2';
-                scheduleDisplay.style.display = 'block';
-                arrivalTimeGroup.style.display = 'block';
-            } else if (dateValue === '7-oct') {
-                title = '🎓 กำหนดการวันจริง (7 ตุลาคม)';
-                content = `
-                    <p class="flex items-start gap-2"><span class="font-bold text-indigo-700 dark:text-indigo-300 w-28 shrink-0">08:00 - 11:00 น.</span> <span>ลงทะเบียน/ถ่ายภาพหมู่/เตรียมตัว</span></p>
-                    <p class="flex items-start gap-2"><span class="font-bold text-indigo-700 dark:text-indigo-300 w-28 shrink-0">11:00 น. เป็นต้นไป</span> <span>พิธีพระราชทานปริญญาบัตร</span></p>
-                    <p class="mt-3 font-semibold text-red-600 dark:text-red-400">* โปรดมาถึงก่อน 10:30 น. เพื่อถ่ายรูปร่วมกัน</p>
-                `;
-                scheduleDisplay.className = 'rounded-lg p-4 bg-green-100 dark:bg-green-900/50 border-l-4 border-green-500 text-green-800 dark:text-green-200 space-y-2';
-                scheduleDisplay.style.display = 'block';
-                arrivalTimeGroup.style.display = 'block';
-            } else {
-                scheduleDisplay.style.display = 'none';
-                arrivalTimeGroup.style.display = 'none';
-                document.getElementById('arrival_time').removeAttribute('required');
-                return;
-            }
-            document.getElementById('arrival_time').setAttribute('required', 'required');
-            scheduleDisplay.innerHTML = `
-                <h3 class="font-bold text-lg mb-2">${title}</h3>
-                ${content}
-            `;
-        }
-        document.getElementById('date').addEventListener('change', (event) => {
-            displaySchedule(event.target.value);
-        });
-        async function initializeLiff() {
-            try {
-                await liff.init({ liffId: liffId });
-                if (!liff.isLoggedIn()) {
-                    liff.login();
-                } else {
-                    const profile = await liff.getProfile();
-                    myUserId = profile.userId;
-                    myName = profile.displayName;
-                    myPictureUrl = profile.pictureUrl;
-                    document.getElementById('login-message').style.display = 'none';
-                    document.getElementById('user-info').style.display = 'block';
-                    document.getElementById('user-name').textContent = myName;
-                    loadMyGuests(myName);
-                    document.getElementById('registration-form').addEventListener('submit', handleFormSubmit);
-                }
-            } catch (err) {
-                updateStatus('login-message', `❌ การเชื่อมต่อ LIFF ล้มเหลว: ${err.message}`, 'red');
-            }
-        }
-        async function handleFormSubmit(event) {
-            event.preventDefault();
-            const submitBtn = event.target.querySelector('.submit-btn');
-            submitBtn.innerHTML = '<i class="material-icons animate-spin">sync</i> กำลังบันทึก...';
-            submitBtn.disabled = true;
-            const form = event.target;
-            const formData = new FormData(form);
-            const payload = {
-                line_user_id: myUserId,
-                host_name: myName,
-                first_name: formData.get('first_name'),
-                last_name: formData.get('last_name'),
-                phone: formData.get('phone'),
-                date: formData.get('date'),
-                arrival_time: formData.get('arrival_time')
-            };
-            try {
-                const response = await fetch(`${apiBaseUrl}/api/guests`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload),
-                });
-                if (response.ok) {
-                    alert('ลงทะเบียนสำเร็จแล้ว! ขอบคุณที่มาเจอกันนะครับ/คะ 😊');
-                    form.reset();
-                    displaySchedule('');
-                    loadMyGuests(myName);
-                } else {
-                    const errorData = await response.json();
-                    alert(`ลงทะเบียนไม่สำเร็จ: ${errorData.error || 'เกิดข้อผิดพลาด'}`);
-                }
-            } catch (error) {
-                alert('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
-            } finally {
-                submitBtn.innerHTML = '<i class="material-icons">check_circle</i> ลงทะเบียน (มาเจอกันนะ!)';
-                submitBtn.disabled = false;
-            }
-        }
-        async function loadMyGuests(hostName) {
-            try {
-                const response = await fetch(`${apiBaseUrl}/api/guests/by-host/${hostName}`);
-                const guests = await response.json();
-                const guestListElement = document.getElementById('guestList');
-                guestListElement.innerHTML = '';
-                if (guests.length === 0) {
-                    guestListElement.innerHTML = '<li class="text-center text-gray-500 dark:text-gray-400 italic p-4">ยังไม่มีการลงทะเบียนจากคุณเลย</li>';
-                    return;
-                }
-                guests.forEach(guest => {
-                    const listItem = document.createElement('li');
-                    listItem.className = 'bg-card-light dark:bg-indigo-900/50 border border-gray-200 dark:border-indigo-800 p-3 rounded-lg flex justify-between items-center';
-                    const dateText = guest.date === '3-oct' ? 'วันซ้อม (3 ต.ค.)' : 'วันจริง (7 ต.ค.)';
-                    const arrivalTimeText = guest.arrival_time ? ` | ⏱️ ${guest.arrival_time}` : '';
-                    listItem.innerHTML = `
-                        <div class="flex-grow">
-                            <strong class="text-text-light dark:text-text-dark">${guest.first_name} ${guest.last_name}</strong>
-                            <small class="block text-primary dark:text-indigo-300 font-semibold">${dateText} ${arrivalTimeText}</small>
-                            ${guest.phone ? `<small class="block text-gray-500 dark:text-gray-400">📞 ${guest.phone}</small>` : ''}
-                        </div>
-                        <button class="delete-btn bg-red-500 text-white rounded-full p-2 hover:bg-red-600 transition" onclick="deleteGuest('${guest.id}', '${guest.first_name} ${guest.last_name}')">
-                            <i class="material-icons text-base">delete</i>
-                        </button>
-                    `;
-                    guestListElement.appendChild(listItem);
-                });
-            } catch (error) {
-                document.getElementById('guestList').innerHTML = '<li class="text-center text-red-500 italic p-4">❌ ดึงข้อมูลไม่สำเร็จ</li>';
-            }
-        }
-        async function deleteGuest(guestId, guestName) {
-            if (!confirm(`คุณแน่ใจหรือไม่ที่จะลบ: ${guestName} ออกจากรายการ?`)) return;
-            try {
-                const response = await fetch(`${apiBaseUrl}/api/guests/${guestId}`, { method: 'DELETE' });
-                if (response.ok) {
-                    alert(`${guestName} ถูกลบออกจากรายการแล้ว`);
-                    loadMyGuests(myName);
-                } else {
-                    alert('การลบไม่สำเร็จ');
-                }
-            } catch (error) {
-                alert('เกิดข้อผิดพลาดในการเชื่อมต่อเซิร์ฟเวอร์');
-            }
-        }
-        async function viewAllGuests(dateValue) {
-            const allGuestsListElement = document.getElementById('allGuestsList');
-            const allGuestStatus = document.getElementById('all-guest-status');
-            allGuestsListElement.innerHTML = '';
-            allGuestStatus.textContent = '⏳ กำลังโหลดรายชื่อ...';
-            try {
-                const dateText = dateValue === '3-oct' ? '3 ตุลาคม (วันซ้อม)' : '7 ตุลาคม (วันจริง)';
-                const response = await fetch(`${apiBaseUrl}/api/guests/by-date/${dateValue}`);
-                const guests = await response.json();
-                allGuestStatus.textContent = `✅ แสดงรายชื่อผู้ลงทะเบียนสำหรับวัน ${dateText}`;
-                if (guests.length === 0) {
-                    allGuestsListElement.innerHTML = '<li class="text-center text-gray-500 dark:text-gray-400 italic p-4">ยังไม่มีผู้ลงทะเบียนในวันนี้</li>';
-                    return;
-                }
-                guests.forEach(guest => {
-                    const listItem = document.createElement('li');
-                    listItem.className = 'bg-card-light dark:bg-indigo-900/50 border border-gray-200 dark:border-indigo-800 p-3 rounded-lg';
-                    const arrivalTimeText = guest.arrival_time ? ` | ⏱️ ${guest.arrival_time}` : '';
-                    listItem.innerHTML = `
-                        <strong class="text-text-light dark:text-text-dark">${guest.first_name} ${guest.last_name}</strong>
-                        <small class="block text-primary dark:text-indigo-300 font-semibold">(มากับ ${guest.host_name}) ${arrivalTimeText}</small>
-                    `;
-                    allGuestsListElement.appendChild(listItem);
-                });
-            } catch (error) {
-                allGuestStatus.textContent = '❌ ดึงข้อมูลรายชื่อแขกทั้งหมดไม่สำเร็จ';
-            }
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            if (typeof liff !== 'undefined') {
-                initializeLiff();
-            } else {
-                // Mockup for testing in browser
-                document.getElementById('login-message').innerHTML = '<p class="text-orange-600 dark:text-orange-400">⚠️ ไม่พบ LIFF SDK กำลังจำลองผู้ใช้</p>';
-                myUserId = 'Umockup_line_id_12345';
-                myName = 'Test User (Mock)';
-                document.getElementById('user-info').style.display = 'block';
-                document.getElementById('user-name').textContent = myName;
-                document.getElementById('registration-form').addEventListener('submit', handleFormSubmit);
-                loadMyGuests(myName);
-            }
-        });
-    </script>
+<body>
+    <div class="container">
+        <h1 class="title"><i class="fas fa-handshake-angle"></i> เชิญพี่ๆน้องๆเพื่อนๆญาติๆเข้าร่วมงานค้าบ!</h1>
+        <p class="subtitle">เพื่อความสะดวกในการนัดหมายและการต้อนรับ กรุณาลงทะเบียนผู้เข้าร่วมงานหน่อยน้า 😊</p>
+        
+        <div id="user-info" style="display: none; background-color: #f3e5f5; padding: 15px; margin: 20px 0; border-radius: 10px; border: 1px solid #d1c4e9;">
+            <p>👋 ยินดีต้อนรับ: <strong id="user-name">-</strong></p>
+            <p style="font-size: 0.8rem; color: #777;">*ข้อมูลจะใช้เพื่อระบุตัวตนในการลงทะเบียนเท่านั้น</p>
+        </div>
+        
+        <form id="registration-form" class="fade-in">
+            <div class="form-group">
+                <label for="date"><i class="fas fa-calendar-alt"></i> จะมาวันไหนเอ่ย? (เลือกได้วันเดียว จะมาทั้งสองวันก็ติดต่อหลังไมค์นะจั๊บ)</label>
+                <select id="date" name="date" required>
+                    <option value="">-- เลือกวันที่จะมาเลยจ้า --</option>
+                    <option value="3-oct">วันซ้อม: ศุกร์ที่ 3 ตุลาคม (07:00 - 20:00)</option>
+                    <option value="7-oct">วันจริง: อังคารที่ 7 ตุลาคม (08:00 เป็นต้นไป)</option>
+                </select>
+            </div>
 
-</body></html>
+            <div id="schedule-display" class="schedule-box" style="display: none;">
+                </div>
+            <div class="form-group" id="arrival-time-group" style="display: none;">
+                <label for="arrival_time"><i class="fas fa-clock"></i> คาดว่าจะมาถึงประมาณกี่โมงดี?</label>
+                <input type="time" id="arrival_time" name="arrival_time" required>
+            </div>
+
+            <div class="form-group">
+                <label for="first_name"><i class="fas fa-user-tag"></i> ชื่อจริง:</label>
+                <input type="text" id="first_name" name="first_name" placeholder="เช่น สุดหล่อ" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="last_name"><i class="fas fa-user-tag"></i> นามสกุล:</label>
+                <input type="text" id="last_name" name="last_name" placeholder="เช่น ใจดี" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone"><i class="fas fa-phone"></i> เบอร์โทรศัพท์ (เผื่อมีเรื่องด่วน):</label>
+                <input type="tel" id="phone" name="phone" placeholder="เช่น 081-234-5678" required>
+            </div>
+            
+            <button type="submit" class="submit-btn btn-primary"><i class="fas fa-check-circle"></i> ลงทะเบียน (มาเจอกันนะ!)</button>
+        </form>
+
+        <div id="login-message" class="status-box fade-in">
+            <p>⏳ กำลังรอการเชื่อมต่อ LIFF และล็อกอิน...</p>
+        </div>
+
+        <hr>
+
+        <h2 class="section-title"><i class="fas fa-heart"></i> รายชื่อผู้ที่ลงทะเบียนมากับคุณแล้ว</h2>
+        <ul id="guestList" class="guest-list fade-in">
+        </ul>
+        
+        <h2 class="section-title"><i class="fas fa-users-viewfinder"></i> ดูรายชื่อแขกทั้งหมดในวันนั้น</h2>
+        <div class="view-all-container">
+            <button onclick="viewAllGuests('3-oct')" class="view-btn btn-secondary">วันซ้อม (3 ต.ค.)</button>
+            <button onclick="viewAllGuests('7-oct')" class="view-btn btn-secondary">วันจริง (7 ต.ค.)</button>
+        </div>
+        <ul id="allGuestsList" class="guest-list fade-in">
+        </ul>
+        <p id="all-guest-status" class="status-box"></p>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
